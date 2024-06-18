@@ -6,7 +6,6 @@
 - [Инициализация](#goto_initialization)
 - [Отправка события](#goto_send_events)
 - [Конфигурация](#goto_configuration)
-- [Сборка проекта](#goto_build_project)
 
 ### Актуальная версия MTSAnalytics - 2.3.0
 
@@ -145,30 +144,6 @@ configuration.networkTraffic = .on
 mtsAnalytics = MTAnalytics.getInstance(configuration: configuration)
 ```
 
-## <a name="goto_build_project">Сборка проекта</a>
-
-### set env
-
-```bash
-export LC_ALL="en_US.UTF-8"
-export LANG="en_US.UTF-8"
-export CP_HOME_DIR=".cocoapods"
-export BUNDLE_PATH="vendor"
-
-. ./set-env.sh
-```
-
-### установка ruby пакетов (кристаликов)
-
-```bash
-bundle install
-```
-
-### запуск fastlane
-
-```bash
-bundle exec fastlane mr --verbose
-```
 
 
 
