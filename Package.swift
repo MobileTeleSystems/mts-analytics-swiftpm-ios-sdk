@@ -20,14 +20,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "MTSAnalytics",
-            url: "https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/releases/download/1.1.2/MTSAnalytics-1.1.2.zip",
-            checksum: "8c33d07e09dafbae0c9c6b6645d4195b65c4baa64d2e5286f5fe261b8519e767",
-	    dependencies: [
-		"SQLite",
-		"FingerprintJS",
-		"PLCrashReporter",
-		"SwiftProtobuf"
-	    ]
+            url: "https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/releases/download/1.1.3/MTSAnalytics-1.1.3.zip",
+            checksum: "c2787e2140fc09bbda3f24f3956931e32d6117dbdf88a2cece5e50f9405c03fc"
          )
     ]
 )
