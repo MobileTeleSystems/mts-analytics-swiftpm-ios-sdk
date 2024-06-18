@@ -12,16 +12,14 @@ let package = Package(
          .library(name: "MTSAnalytics", targets: ["MTSAnalytics"])
     ],
     dependencies: [
-        .package(url: "https://github.com/stephencelis/SQLite.swift.git", .upToNextMajor(from: "0.14.1")),
-        .package(url: "https://github.com/fingerprintjs/fingerprintjs-ios.git", .upToNextMajor(from: "1.3.0")),
       	.package(url: "https://github.com/microsoft/plcrashreporter.git", .upToNextMajor(from: "1.11.0")),
 	.package(url: "https://github.com/apple/swift-protobuf.git", .upToNextMajor(from: "1.22.1"))
     ],
     targets: [
         .binaryTarget(
             name: "MTSAnalytics",
-            url: "https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/releases/download/1.2.6/MTSAnalytics-1.2.6.zip",
-            checksum: "d26bf7cdab0580c5de0e15d59a23b1e0f8a3389aa11ca4464db4188715627155"
+            url: "https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/releases/download/1.2.7/MTSAnalytics-1.2.7.zip",
+            checksum: "35499c941b4e1efaf51c0c097ab263b279ffc33a8eb51bc32e53b2dbfecf2247"
          )
     ]
 )
