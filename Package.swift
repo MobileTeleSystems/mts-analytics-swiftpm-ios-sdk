@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "MTSAnalytics",
     platforms: [
-        .iOS(.v12)
+        .iOS(.v13)
     ],
     products: [
          .library(name: "MTSAnalytics", targets: ["MTSAnalytics"])
@@ -18,8 +18,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "MTSAnalytics",
-            url: "https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/releases/download/2.0.0/MTSAnalytics-2.0.0.zip",
-            checksum: "c46d0c8ff8816089ea4b0dd919615b138966debeb2cbdc6bf4767363283e33a8"
+            url: "https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/releases/download/2.1.0/MTSAnalytics-2.1.0.zip",
+            checksum: "7a5275d775d0ebf5419429e117cd07d1c5ff608385887a75eb0cc14d41092de2"
          )
     ]
 )
