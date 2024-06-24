@@ -1,13 +1,14 @@
 # MTS Analytics iOS
 
-Документация [здесь](https://a.mts.ru/support/analytics-software/app-sdk-setup/ios-sdk/)
+Документация [confluence](https://confluence.mts.ru/pages/viewpage.action?pageId=311176873)
 
 - [Подключение SDK](#goto_add_dependencies)
 - [Инициализация](#goto_initialization)
 - [Отправка события](#goto_send_events)
 - [Конфигурация](#goto_configuration)
 
-### Актуальная версия MTSAnalytics - 2.3.0
+
+### Актуальная версия MTSAnalytics - 2.4.0
 
 ## Требования для установки SDK
 
@@ -28,7 +29,7 @@ https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/
 ### Cocoapods
 1. Чтобы добавить библиотеку MTSAnalytics в проект, через CocoaPods добавьте в Podfile:
 ```ruby
-pod 'MTSAnalytics',  '~> 2.3.0'
+pod 'MTSAnalytics',  '~> 2.4.0'
 ```
 
 2. Устанавливаем ссылку на библиотеку MTSAnalytics в Podfile: 
@@ -143,7 +144,3 @@ configuration.networkTraffic = .on
 ```swift
 mtsAnalytics = MTAnalytics.getInstance(configuration: configuration)
 ```
-
-
-
-
