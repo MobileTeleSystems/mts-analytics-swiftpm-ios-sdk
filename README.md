@@ -5,10 +5,11 @@
 - [Подключение SDK](#goto_add_dependencies)
 - [Инициализация](#goto_initialization)
 - [Отправка события](#goto_send_events)
+- [ECommerce события](#goto_ecommerce_feature)
 - [Конфигурация](#goto_configuration)
 
 
-### Актуальная версия MTSAnalytics - 2.4.0
+### Актуальная версия MTSAnalytics - 2.5.1
 
 ## Требования для установки SDK
 
@@ -29,7 +30,7 @@ https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/
 ### Cocoapods
 1. Чтобы добавить библиотеку MTSAnalytics в проект, через CocoaPods добавьте в Podfile:
 ```ruby
-pod 'MTSAnalytics',  '~> 2.4.0'
+pod 'MTSAnalytics',  '~> 2.5.1'
 ```
 
 2. Устанавливаем ссылку на библиотеку MTSAnalytics в Podfile: 
@@ -144,3 +145,191 @@ configuration.networkTraffic = .on
 ```swift
 mtsAnalytics = MTAnalytics.getInstance(configuration: configuration)
 ```
+## <a name="goto_ecommerce_feature">Отправка ECommerce событий</a>
+
+МТС Аналитика предоставляет два вида шаблонов ECommerce событий: MTECommerceGA4 и MTECommerceUA.
+Для отправки ECommerce событий используется метод
+
+```swift
+mtsAnalytics?.track(event: event)
+```
+
+### MTECommerceGA4Event
+```swift
+let event = MTECommerceGA4Event(
+                                eventName: MTECommerceGA4EventName,
+                                parameters: [String: Any?]?,
+                                transactionId: String?,
+                                affiliation: String?,
+                                value: String?,
+                                currency: String?,
+                                tax: String?,
+                                shipping: String?,
+                                shippingTier: String?,
+                                paymentType: String?,
+                                coupon: String?,
+                                itemListName: String?,
+                                itemListId: String?,
+                                items: [MTECommerceGA4EventItem]?,
+                                creativeName: String?,
+                                creativeSlot: String?,
+                                promotionId: String?,
+                                promotionName: String?
+)
+```
+
+При выборе определенного кейса в **MTECommerceGA4EventName** в eventName, есть обязательные поля для корректной разметки.
+##### add_payment_info
+Пользователь выбрал способ оплаты.
+Обязательные поля: массив MTECommerceGA4EventItem.
+##### add_shipping_info
+Пользователь выбрал способ доставки.
+Обязательные поля: массив MTECommerceGA4EventItem.
+##### add_to_cart
+Пользователь добавляет товар в корзину из карточки товара или любых других товарных блоков.
+Обязательные поля: массив MTECommerceGA4EventItem.
+##### add_to_wishlist
+Пользователь добавляет товар в избранное.
+Обязательные поля: массив MTECommerceGA4EventItem.
+##### begin_checkout
+Пользователь переходит на страницу оформления заказа.
+Обязательные поля: массив MTECommerceGA4EventItem.
+##### purchase
+Пользователь совершил покупку. Данное событие должно срабатывать только один раз для оформленного заказа.
+Обязательные поля:
+- transactionId.
+- массив MTECommerceGA4EventItem.
+##### refund
+Пользователь возвращает покупку.
+Обязательные поля:
+- при полном возврате transactionId.
+- при частичном возврате массив MTECommerceGA4EventItem.
+##### remove_from_cart
+Пользователь удаляет товар из корзины, карточки товара.
+Обязательные поля: массив MTECommerceGA4EventItem.
+##### select_item
+Пользователь кликает по товарам в каталоге, результате поиска, товарных блоках и других списках.
+Обязательные поля: массив MTECommerceGA4EventItem.
+##### select_promotion
+При клике на рекламные акции.
+Обязательные поля: массив MTECommerceGA4EventItem.
+##### view_cart
+Пользователь посетил страницу корзины.
+Обязательные поля: массив MTECommerceGA4EventItem.
+##### view_item
+Пользователь просматривает карточку товара.
+Обязательные поля: массив MTECommerceGA4EventItem.
+##### view_item_list
+Пользователь просматривает список товаров.
+Обязательные поля: массив MTECommerceGA4EventItem.
+##### view_promotion
+При просмотре рекламных акций на странице.
+Обязательные поля: массив MTECommerceGA4EventItem.
+
+#### MTECommerceGA4EventItem
+Массив items представляет собой структуру MTECommerceGA4EventItem
+```swift
+let item = MTEcommerceGA4EventItem(
+                                    itemId: String,
+                                    itemName: String,
+                                    itemListName: String?,
+                                    itemListId: String?,
+                                    index: String?,
+                                    itemBrand: String?,
+                                    itemCategory: String?,
+                                    itemCategory2: String?,
+                                    itemCategory3: String?,
+                                    itemCategory4: String?,
+                                    itemCategory5: String?,
+                                    itemVariant: String?,
+                                    affiliation: String?,
+                                    discount: String?,
+                                    coupon: String?,
+                                    price: String?,
+                                    currency: String?,
+                                    quantity: String?,
+                                    locationId: String?,
+                                    creativeName: String?,
+                                    creativeSlot: String?,
+                                    promotionId: String?,
+                                    promotionName: String?,
+                                    parameters: [String: Any?]?
+)
+```
+
+### MTECommerceUAEvent
+```swift
+let event = MTEcommerceUAEvent(eventName: MTEcommerceUAEventName, ecommerce: MTECommerceUA))
+
+let ecommerceUA = MTECommerceUA(
+                                purchase: MTECommerceUA.Purchase?,
+                                checkoutOption: MTECommerceUA.CheckoutOption?,
+                                add: MTECommerceUA.Add?,
+                                checkout: MTECommerceUA.Checkout?,
+                                refund: MTECommerceUA.Refund?,
+                                remove: MTECommerceUA.Remove?,
+                                click: MTECommerceUA.Click?,
+                                promoClick: MTECommerceUA.PromoClick?,
+                                detail: MTECommerceUA.Detail?,
+                                impressions: MTECommerceUA.Impressions?,
+                                promoView: MTECommerceUA.PromoView?
+)
+```
+Внутри purchase, checkoutOption, add и т.д могут находится структуры **ActionField** и массив **Product**.
+
+При выборе определенного кейса в **MTECommerceUAEventName** в eventName, есть обязательные поля для корректной разметки.
+##### checkout_option
+Пользователь выбрал способ оплаты или выбрал способ доставки.
+Обязательные поля:
+- ActionField внутри *CheckoutOption* непустой.
+
+##### add
+Пользователь добавляет товар в корзину из карточки товара или любых других товарных блоков.
+Обязательные поля:
+- Массив Product внутри *Add* непустой. В каждом Product поля *name* и *id* должны быть заполнены.
+
+##### checkout
+Пользователь переходит на страницу оформления заказа.
+Обязательные поля:
+- Массив Product внутри *Checkout* непустой. В каждом Product поля *name* и *id* должны быть заполнены.
+
+##### purchase
+Пользователь совершил покупку. Данное событие должно срабатывать только один раз для оформленного заказа.
+Обязательные поля:
+- ActionField внутри *Purchase* непустой. Поля *id*, *revenue* должны быть заполнены.
+- Массив Product внутри *Purchase* непустой. В каждом Product поля *name* и *id* должны быть заполнены.
+
+##### refund
+Пользователь возвращает покупку.
+Обязательные поля:
+- ActionField внутри *Refund* непустой. При полном возврате поле *id* должно быть заполнено, при частичном в *Product* поля *id*, *quantity* также обязательны к заполнению.
+
+##### remove
+Пользователь удаляет товар из корзины, карточки товара.
+Обязательные поля:
+- Массив Product внутри *Remove* непустой. В каждом Product поля *name* и *id* должны быть заполнены.
+
+##### click
+Пользователь кликает по товарам в каталоге, результате поиска, товарных блоках и других списках.
+Обязательные поля:
+- Массив Product внутри *Click* непустой. В каждом Product поля *name* и *id* должны быть заполнены.
+
+##### promoClick
+При клике на рекламные акции.
+Обязательные поля:
+- Массив Promotions внутри *PromoClick* непустой. В каждом Promotion поля *name* и *id* должны быть заполнены.
+
+##### detail
+Пользователь просматривает карточку товара.
+Обязательные поля:
+- Массив Product внутри *Product* непустой. В каждом Product поля *name* и *id* должны быть заполнены.
+
+##### impressions
+Пользователь просматривает список товаров.
+Обязательные поля:
+- Массив Product внутри *Impressions* непустой. В каждом Product поля *name* и *id* должны быть заполнены.
+
+##### promoView
+При просмотре рекламных акций на странице.
+Обязательные поля:
+- Массив Promotions внутри *PromoView* непустой. В каждом Promotion поля *name* и *id* должны быть заполнены.
