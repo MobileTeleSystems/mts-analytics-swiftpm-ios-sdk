@@ -5,11 +5,11 @@
 - [Подключение SDK](#goto_add_dependencies)
 - [Инициализация](#goto_initialization)
 - [Отправка события](#goto_send_events)
-- [ECommerce события](#goto_ecommerce_feature)
 - [Конфигурация](#goto_configuration)
+- [ECommerce события](#goto_ecommerce_feature)
+- [Отслеживание deeplink](#goto_deeplink)
 
-
-### Актуальная версия MTSAnalytics - 2.5.1
+### Актуальная версия MTSAnalytics - 2.5.2
 
 ## Требования для установки SDK
 
@@ -30,7 +30,7 @@ https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/
 ### Cocoapods
 1. Чтобы добавить библиотеку MTSAnalytics в проект, через CocoaPods добавьте в Podfile:
 ```ruby
-pod 'MTSAnalytics',  '~> 2.5.1'
+pod 'MTSAnalytics',  '~> 2.5.2'
 ```
 
 2. Устанавливаем ссылку на библиотеку MTSAnalytics в Podfile: 
@@ -333,3 +333,66 @@ let ecommerceUA = MTECommerceUA(
 При просмотре рекламных акций на странице.
 Обязательные поля:
 - Массив Promotions внутри *PromoView* непустой. В каждом Promotion поля *name* и *id* должны быть заполнены.
+
+## <a name="goto_deeplink">Отслеживание deeplink</a>
+
+### UISceneDelegate
+
+Чтобы отслеживать открытия приложения с помощью link, в *UISceneDelegate* в метод ```scene:willConnectToSession:options:``` добавьте код:
+
+```swift
+func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    let userActivity = connectionOptions.userActivities.first
+    if userActivity?.activityType == NSUserActivityTypeBrowsingWeb {
+        // Universal Link
+        if let url = userActivity?.webpageURL {
+            mtsAnalytics.track(url: url, parameters: [:])
+        }
+    } else {
+        // Deeplink
+        if let context = connectionOptions.urlContexts.first {
+            mtsAnalytics.track(url: context.url, parameters: [:])
+        }
+    }
+}
+```
+
+Чтобы отслеживать открытия приложения в запущенном приложении, используйте код:
+
+```swift
+func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    let url = userActivity.webpageURL
+    if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url {
+        mtsAnalytics.track(url: url, parameters: [:])
+    }
+}
+
+func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    if let context = URLContexts.first {
+        mtsAnalytics.track(url: context.url, parameters: [:])
+    }
+}
+```
+
+### UIApplicationDelegate
+
+Чтобы отслеживать открытия приложения с помощью deeplink или обработку deeplink в запущенном приложении, используйте UIApplicationDelegate и добавьте следующие изменения:
+
+```swift
+func application(_ application: UIApplication, trackOpeningURL url: URL) -> Bool {
+    mtsAnalytics.track(url: context.url, parameters: [:])
+    return true
+}
+
+func application(_ application: UIApplication, openURL url: URL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+    mtsAnalytics.track(url: context.url, parameters: [:])
+    return true
+}
+
+func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL {
+        mtsAnalytics.track(url: context.url, parameters: [:])
+    }
+    return true
+}
+```
