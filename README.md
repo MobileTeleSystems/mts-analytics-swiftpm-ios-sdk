@@ -9,7 +9,7 @@
 - [ECommerce события](#goto_ecommerce_feature)
 - [Отслеживание deeplink](#goto_deeplink)
 
-### Актуальная версия MTSAnalytics - 2.5.2
+### Актуальная версия MTSAnalytics - 2.5.3
 
 ## Требования для установки SDK
 
@@ -30,7 +30,7 @@ https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/
 ### Cocoapods
 1. Чтобы добавить библиотеку MTSAnalytics в проект, через CocoaPods добавьте в Podfile:
 ```ruby
-pod 'MTSAnalytics',  '~> 2.5.2'
+pod 'MTSAnalytics',  '~> 2.5.3'
 ```
 
 2. Устанавливаем ссылку на библиотеку MTSAnalytics в Podfile: 

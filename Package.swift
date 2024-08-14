@@ -14,13 +14,13 @@ let package = Package(
     ],
     dependencies: [
       	.package(url: "https://github.com/microsoft/plcrashreporter.git", .upToNextMajor(from: "1.11.0")),
-        .package(url: "https://github.com/apple/swift-protobuf.git", .upToNextMinor(from: "1.26.0"))
+        .package(url: "https://github.com/apple/swift-protobuf.git", .upToNextMajor(from: "1.27.1"))
     ],
     targets: [
         .binaryTarget(
             name: "MTSAnalytics",
-            url: "https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/releases/download/2.5.2/MTSAnalytics-2.5.2.zip",
-            checksum: "deef58c96f3d0d738a364237fd06ad9ab7cf3bea775a74d2186fb01ca38faeba"
+            url: "https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/releases/download/2.5.3/MTSAnalytics-2.5.3.zip",
+            checksum: "dea16bd828a0490f75e7294512ef804c68374472d501fb450015468c66a7ebe7"
          )
     ]
 )
