@@ -9,7 +9,7 @@
 - [ECommerce события](#goto_ecommerce_feature)
 - [Отслеживание deeplink](#goto_deeplink)
 
-### Актуальная версия MTSAnalytics - 3.0.0
+### Актуальная версия MTAnalytics - 3.0.1
 
 ## Требования для установки SDK
 
@@ -28,12 +28,12 @@ https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/
 ```
 
 ### Cocoapods
-1. Чтобы добавить библиотеку MTSAnalytics в проект, через CocoaPods добавьте в Podfile:
+1. Чтобы добавить библиотеку MTAnalytics в проект, через CocoaPods добавьте в Podfile:
 ```ruby
-pod 'MTSAnalytics',  '~> 3.0.0'
+pod 'MTAnalytics',  '~> 3.0.1'
 ```
 
-2. Устанавливаем ссылку на библиотеку MTSAnalytics в Podfile: 
+2. Устанавливаем ссылку на библиотеку MTAnalytics в Podfile: 
 ```ruby
 source 'https://github.com/MobileTeleSystems/mts-analytics-podspecs'
 ```
@@ -42,7 +42,7 @@ source 'https://github.com/MobileTeleSystems/mts-analytics-podspecs'
 ## <a name="goto_initialization">Шаг 2. Инициализация SDK</a>
 1.  Для импорта библиотеки добавьте в проект:
 ```swift
-import MTSAnalytics
+import MTAnalytics
 ```
 2.  Создайте экземпляр MTAnalyticsProvider:
 ```swift
@@ -52,7 +52,7 @@ var mtsAnalytics: MTAnalyticsProvider?
 ```swift
 let configuration = MTAnalyticsConfiguration(flowId: "FLOW_ID")
 ```
-4. Для завершения инициализации MTSAnalytics добавьте конфигуратор:
+4. Для завершения инициализации MTAnalytics добавьте конфигуратор:
 ```swift
 mtsAnalytics = MTAnalytics.getInstance(configuration: configuration)
 ```

@@ -4,13 +4,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "MTSAnalytics",
+    name: "MTAnalytics",
     platforms: [
         .iOS(.v13),
         .tvOS(.v13)
     ],
     products: [
-         .library(name: "MTSAnalytics", targets: ["MTSAnalytics"])
+         .library(name: "MTAnalytics", targets: ["MTAnalytics"])
     ],
     dependencies: [
       	.package(url: "https://github.com/microsoft/plcrashreporter.git", .upToNextMajor(from: "1.11.0")),
@@ -18,9 +18,9 @@ let package = Package(
     ],
     targets: [
         .binaryTarget(
-            name: "MTSAnalytics",
-            url: "https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/releases/download/3.0.0/MTAnalytics-3.0.0.zip",
-            checksum: "8e24a805ce208419ae5090297fe051693cc489cf8ca1c803c630c228dd1c1587"
+            name: "MTAnalytics",
+            url: "https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/releases/download/3.0.1/MTAnalytics-3.0.1.zip",
+            checksum: "0ae346a4bdf030304a1e2cc1abcb3c3c27dc931825ec074f0f9bd6f84e3cc058"
          )
     ]
 )
