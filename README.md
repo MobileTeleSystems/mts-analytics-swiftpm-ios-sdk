@@ -8,8 +8,10 @@
 - [Конфигурация](#goto_configuration)
 - [ECommerce события](#goto_ecommerce_feature)
 - [Отслеживание deeplink](#goto_deeplink)
+- [Отслеживание App Activity](#goto_app_activity)
+- [Link Manager](#goto_universal_link)
 
-### Актуальная версия MTAnalytics - 3.0.0
+### Актуальная версия MTAnalytics - 3.1.0
 
 ## Требования для установки SDK
 
@@ -30,7 +32,7 @@ https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/
 ### Cocoapods
 1. Чтобы добавить библиотеку MTAnalytics в проект, через CocoaPods добавьте в Podfile:
 ```ruby
-pod 'MTMetrics',  '~> 3.0.0'
+pod 'MTMetrics',  '~> 3.1.0'
 ```
 
 2. Устанавливаем ссылку на библиотеку MTAnalytics в Podfile: 
@@ -334,7 +336,7 @@ let ecommerceUA = MTECommerceUA(
 Обязательные поля:
 - Массив Promotions внутри *PromoView* непустой. В каждом Promotion поля *name* и *id* должны быть заполнены.
 
-## <a name="goto_deeplink">Отслеживание deeplink</a>
+## <a name="goto_deeplink">Отслеживание Deep/Universal Links</a>
 
 ### UISceneDelegate
 
@@ -392,6 +394,133 @@ func application(_ application: UIApplication, openURL url: URL, sourceApplicati
 func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
     if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL {
         mtsAnalytics.track(url: context.url, parameters: [:])
+    }
+    return true
+}
+```
+
+## <a name="goto_app_activity">Отслеживание App Activity</a>
+С помощью МТС Аналитики можно отследить сколько времени проходит от нажатия пользователем на иконку приложения до первого видимого и отзывчивого экрана.
+Для этого необходимо проинициализировать МТС Аналитику как можно раньше. 
+
+1. Рекомендуется инициализировать SDK в данном методе:
+```swift
+func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool
+```
+2. Далее во viewDidAppear первого экрана, который будет виден, вызвать метод:
+```swift
+mtsAnalytics?.trackViewDidAppearTime()
+```
+Итого можно будет отследить три метрики:
+- время инициализации приложения
+- время рендеринга первого фрейма
+- время показа первого экрана
+
+## <a name="goto_universal_link">Использование Link Manager</a>
+
+### Настройка приложения
+
+### В Xcode необходимо выполнить следующие действия:
+
+1. Выбрать **Target** приложения и вкладку **General**.
+2. В разделе **Capabilities** включить опцию Associated Domains.
+3. В поле **Domains** добавьте новую строку, сгенерированную административной панелью Link Manager. Формат должен быть следующим:
+```
+applinks:*product*.url.mts.ru
+```
+
+>>>
+В случае если вам необходимо протестировать под VPN, то вы можете использовать параметр mode:
+```
+applinks:*product*.url.mts.ru?mode=developer
+```
+>>>
+
+### Использование прямой Universal Link
+
+Прямая Universal Link имеет следующий формат:
+
+```
+https://*product*.url.mts.ru/example
+```
+
+В зависимости от того, установлено и настроено ли приложение на устройстве будет:
+1. Запуск приложения 
+2. Открытие AppStore на странице приложения
+
+### Получение параметров Universal Link
+
+### Описание API
+
+В публичном интерфейсе SDK есть два метода для получения параметров:
+
+1. Для вызова через Swift Concurrency:
+```
+public func resolveLink(url: URL) async throws -> MTLink
+```
+2. Для вызова через completion:
+```
+public func resolveLink(url: URL, completion: @escaping (Result<MTLink, Error>) -> Void)
+```
+
+Вернется структура MTLink:
+```
+public struct MTLink {
+
+    /**
+    Link (deeplink) with params for app.
+     */
+    public let location: String
+
+    /**
+     Params from Link Manager for link.
+     */
+    public let params: [String: Any?]
+}
+```
+
+### UISceneDelegate
+
+Чтобы обработать universal link в SceneDelegate, в случае если приложение запускается по ссылке, используйте код: 
+
+```swift
+func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+    let userActivity = connectionOptions.userActivities.first
+    if userActivity?.activityType == NSUserActivityTypeBrowsingWeb {
+        Task {
+            let link = try? await mtsAnalytics.resolveLink(url: url)
+        }
+    }
+}
+```
+
+Для случая, если приложение уже было открыто на момент перехода по ссылке:
+
+```swift
+func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
+    let url = userActivity.webpageURL
+    if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url {
+        Task {
+            let link = try? await mtsAnalytics.resolveLink(url: url)
+        }
+    }
+}
+
+```
+
+### UIApplicationDelegate
+
+Чтобы обработать universal link в SceneDelegate, используйте следующий код:
+
+```swift
+func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+    mtsAnalytics.resolveLink(url: url) { result in
+        switch result {
+            case .success(let link):
+                ...
+            case .failure(let error):
+                ...
+        }
     }
     return true
 }
