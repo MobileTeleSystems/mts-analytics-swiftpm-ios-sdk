@@ -19,8 +19,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "MTMetrics",
-            url: "https://packages.a.mts.ru/repository/apple-sdk/ios-sdk/build/MTMetrics-3.1.0.zip",
-            checksum: "d106b9e801aad9f7cc0236a7f422c85fc258beb0030f1438d8fd6e988739bbe5"
+            url: "https://packages.a.mts.ru/repository/apple-sdk/ios-sdk/build/MTMetrics-3.2.0.zip",
+            checksum: "0143c8ae1e61b468b326f9cf7c995aa9b96011a871e5834966ab9517bdf604d7"
          )
     ]
 )

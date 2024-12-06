@@ -10,8 +10,9 @@
 - [Отслеживание deeplink](#goto_deeplink)
 - [Отслеживание App Activity](#goto_app_activity)
 - [Link Manager](#goto_universal_link)
+- [Лимит символов события](#goto_symbols_limit)
 
-### Актуальная версия MTAnalytics - 3.1.0
+### Актуальная версия MTMetrics - 3.2.0
 
 ## Требования для установки SDK
 
@@ -30,12 +31,12 @@ https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/
 ```
 
 ### Cocoapods
-1. Чтобы добавить библиотеку MTAnalytics в проект, через CocoaPods добавьте в Podfile:
+1. Чтобы добавить библиотеку MTMetrics в проект, через CocoaPods добавьте в Podfile:
 ```ruby
-pod 'MTMetrics',  '~> 3.1.0'
+pod 'MTMetrics',  '~> 3.2.0'
 ```
 
-2. Устанавливаем ссылку на библиотеку MTAnalytics в Podfile: 
+2. Устанавливаем ссылку на библиотеку MTMetrics в Podfile:
 ```ruby
 source 'https://github.com/MobileTeleSystems/mts-analytics-podspecs'
 ```
@@ -54,6 +55,7 @@ var mtsAnalytics: MTAnalyticsProvider?
 ```swift
 let configuration = MTAnalyticsConfiguration(flowId: "FLOW_ID")
 ```
+В Debug режиме происходит валидация flowId. При использовании некорректного flowId будет fatalError с сообщением "FlowId is not valid. Please make sure you pass a valid value"
 4. Для завершения инициализации MTAnalytics добавьте конфигуратор:
 ```swift
 mtsAnalytics = MTAnalytics.getInstance(configuration: configuration)
@@ -525,3 +527,16 @@ func application(_ application: UIApplication, continue userActivity: NSUserActi
     return true
 }
 ```
+
+## <a name="goto_symbols_limit">Лимит символов события</a>
+
+Для разных полей существует определенный лимит на количество символов. При привышении лимита поле будет обрезаться.
+Для всех событий:
+- eventName - 500.
+- screenName - 100.
+- parameters - первые 20 полей до 500, остальные до 100.
+
+MTEcosystemEvent:
+- первые 20 полей до 500, остальные до 200.
+
+Максимальное количество символов для MTECommerceGa4 и MTECommerceUA - 100.
