@@ -12,7 +12,7 @@
 - [Link Manager](#goto_universal_link)
 - [Лимит символов события](#goto_symbols_limit)
 
-### Актуальная версия MTMetrics - 3.2.0
+### Актуальная версия MTMetrics - 4.0.0
 
 ## Требования для установки SDK
 
@@ -33,7 +33,7 @@ https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/
 ### Cocoapods
 1. Чтобы добавить библиотеку MTMetrics в проект, через CocoaPods добавьте в Podfile:
 ```ruby
-pod 'MTMetrics',  '~> 3.2.0'
+pod 'MTMetrics',  '~> 4.0.0'
 ```
 
 2. Устанавливаем ссылку на библиотеку MTMetrics в Podfile:
@@ -43,22 +43,21 @@ source 'https://github.com/MobileTeleSystems/mts-analytics-podspecs'
 3. Сохраните Podfile и введите pod install в Терминале для установки библиотеки.
 
 ## <a name="goto_initialization">Шаг 2. Инициализация SDK</a>
-1.  Для импорта библиотеки добавьте в проект:
+1. Сделайте импорт библиотеки:
 ```swift
 import MTMetrics
 ```
-2.  Создайте экземпляр MTAnalyticsProvider:
+2. Инициализируйте библиотеку в методе application(_:didFinishLaunchingWithOptions:) вашего UIApplicationDelegate:
+  
 ```swift
-var mtsAnalytics: MTAnalyticsProvider?
-```
-3. Для создания начальной конфигурации добавьте ID потока данных в flowId = "…": 
-```swift
-let configuration = MTAnalyticsConfiguration(flowId: "FLOW_ID")
-```
-В Debug режиме происходит валидация flowId. При использовании некорректного flowId будет fatalError с сообщением "FlowId is not valid. Please make sure you pass a valid value"
-4. Для завершения инициализации MTAnalytics добавьте конфигуратор:
-```swift
-mtsAnalytics = MTAnalytics.getInstance(configuration: configuration)
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    // Создание конфига с уникальным flowid
+    let configuration = MTMetricsConfiguration(flowId: "your-flow-id")
+    
+    // Активация конфига
+    MTMetricsApp.configure(configuration)
+}
+
 ```
 
 ## <a name="goto_send_events">Шаг 3. Отправка события</a>
@@ -73,12 +72,12 @@ let event = MTCustomEvent(eventType: .event, eventName: "button_tap", screenName
 
 ### Настроить отправку экземпляра события в МТС Аналитику:
 ```swift
-mtsAnalytics?.track(event: event)
+MTMetricsApp.analytics?.track(event: event)
 ```
 
 ### Так же можно отправлять event и его дополнительные атрибуты без использования шаблонов
 ```swift
-mtsAnalytics?.track(eventName: "button_tap", parameters: ["test": "123"])
+MTMetricsApp.analytics?.track(eventName: "button_tap", parameters: ["test": "123"])
 ```
 
 ### Создать экземпляр ошибок:
@@ -92,29 +91,37 @@ let error = MTError(errorName: "failed request", parameters: ["test": "123"])
 ### Кросс-платформенное отслеживание
 Для авторизации сессии через webView используйте WebSSO state, который можно получить из WebSSO SDK.
 ```swift
-mtsAnalytics?.sendAuthenticationEvent(ssoState: "...", redirectUrl: "https://mts.ru")
+MTMetricsApp.analytics?.sendAuthenticationEvent(ssoState: "...", redirectUrl: "https://mts.ru")
 ```
 Для передачи значения вызовите метод и передайте ранее полученный ssoState в формате String.
 Для определения сессии юзера в случае перехода в webView или внешний браузер через приложение в котором активирован MTAnalytics, при формировании запроса для webView или браузер требуется добавить webSessionQueryItem в url запроса в виде URLQueryItem.
 ```swift
-let queryItem = mtsAnalytics?.webSessionQueryItem(url: "https://mts.ru")
+let queryItem = MTMetricsApp.analytics?.webSessionQueryItem(url: "https://mts.ru")
 ```
 
 ### Передача данных о геолокации
 ```swift
-mtsAnalytics?.setLocation(CLLocation(latitude: latitude, longitude: longitude))
+MTMetricsApp.analytics?.setLocation(CLLocation(latitude: latitude, longitude: longitude))
 ```
 
 ### Обновление конфигурации без повторной инициализации
 ```swift
-mtsAnalytics?.update(with: configuration)
+MTMetricsApp.analytics?.update(with: configuration)
 ```
 
 ## <a name="goto_configuration">Конфигурация SDK</a>
 
-### Инициализация конфигурации
 ```swift
-let configuration = MTAnalyticsConfiguration(flowId: "FLOW_ID")
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+    let configuration = MTMetricsConfiguration(flowId: "your-flow-id")
+
+    // Кастомизация конфигурации аналитики, например расширение хранилища событий
+    configuration.eventStorageLimit = 10000
+
+    // Инициализация Аналитики
+    MTMetricsApp.configure(configuration)
+}
+
 ```
 
 ### Сбор краш метрик
@@ -145,40 +152,36 @@ configuration.networkTraffic = .on
 Дает возможность остановить отправку событий. По умолчанию отправка событий включена.
 
 
-### Для запуска MTAnalytics требуется передать конфигурацию
-```swift
-mtsAnalytics = MTAnalytics.getInstance(configuration: configuration)
-```
 ## <a name="goto_ecommerce_feature">Отправка ECommerce событий</a>
 
 МТС Аналитика предоставляет два вида шаблонов ECommerce событий: MTECommerceGA4 и MTECommerceUA.
 Для отправки ECommerce событий используется метод
 
 ```swift
-mtsAnalytics?.track(event: event)
+MTMetricsApp.analytics?.track(event: event)
 ```
 
 ### MTECommerceGA4Event
 ```swift
 let event = MTECommerceGA4Event(
-                                eventName: MTECommerceGA4EventName,
-                                parameters: [String: Any?]?,
-                                transactionId: String?,
-                                affiliation: String?,
-                                value: String?,
-                                currency: String?,
-                                tax: String?,
-                                shipping: String?,
-                                shippingTier: String?,
-                                paymentType: String?,
-                                coupon: String?,
-                                itemListName: String?,
-                                itemListId: String?,
-                                items: [MTECommerceGA4EventItem]?,
-                                creativeName: String?,
-                                creativeSlot: String?,
-                                promotionId: String?,
-                                promotionName: String?
+        eventName: MTECommerceGA4EventName,
+        parameters: [String: Any?]?,
+        transactionId: String?,
+        affiliation: String?,
+        value: String?,
+        currency: String?,
+        tax: String?,
+        shipping: String?,
+        shippingTier: String?,
+        paymentType: String?,
+        coupon: String?,
+        itemListName: String?,
+        itemListId: String?,
+        items: [MTECommerceGA4EventItem]?,
+        creativeName: String?,
+        creativeSlot: String?,
+        promotionId: String?,
+        promotionName: String?
 )
 ```
 
@@ -234,30 +237,30 @@ let event = MTECommerceGA4Event(
 Массив items представляет собой структуру MTECommerceGA4EventItem
 ```swift
 let item = MTEcommerceGA4EventItem(
-                                    itemId: String,
-                                    itemName: String,
-                                    itemListName: String?,
-                                    itemListId: String?,
-                                    index: String?,
-                                    itemBrand: String?,
-                                    itemCategory: String?,
-                                    itemCategory2: String?,
-                                    itemCategory3: String?,
-                                    itemCategory4: String?,
-                                    itemCategory5: String?,
-                                    itemVariant: String?,
-                                    affiliation: String?,
-                                    discount: String?,
-                                    coupon: String?,
-                                    price: String?,
-                                    currency: String?,
-                                    quantity: String?,
-                                    locationId: String?,
-                                    creativeName: String?,
-                                    creativeSlot: String?,
-                                    promotionId: String?,
-                                    promotionName: String?,
-                                    parameters: [String: Any?]?
+        itemId: String,
+        itemName: String,
+        itemListName: String?,
+        itemListId: String?,
+        index: String?,
+        itemBrand: String?,
+        itemCategory: String?,
+        itemCategory2: String?,
+        itemCategory3: String?,
+        itemCategory4: String?,
+        itemCategory5: String?,
+        itemVariant: String?,
+        affiliation: String?,
+        discount: String?,
+        coupon: String?,
+        price: String?,
+        currency: String?,
+        quantity: String?,
+        locationId: String?,
+        creativeName: String?,
+        creativeSlot: String?,
+        promotionId: String?,
+        promotionName: String?,
+        parameters: [String: Any?]?
 )
 ```
 
@@ -266,17 +269,17 @@ let item = MTEcommerceGA4EventItem(
 let event = MTEcommerceUAEvent(eventName: MTEcommerceUAEventName, ecommerce: MTECommerceUA))
 
 let ecommerceUA = MTECommerceUA(
-                                purchase: MTECommerceUA.Purchase?,
-                                checkoutOption: MTECommerceUA.CheckoutOption?,
-                                add: MTECommerceUA.Add?,
-                                checkout: MTECommerceUA.Checkout?,
-                                refund: MTECommerceUA.Refund?,
-                                remove: MTECommerceUA.Remove?,
-                                click: MTECommerceUA.Click?,
-                                promoClick: MTECommerceUA.PromoClick?,
-                                detail: MTECommerceUA.Detail?,
-                                impressions: MTECommerceUA.Impressions?,
-                                promoView: MTECommerceUA.PromoView?
+        purchase: MTECommerceUA.Purchase?,
+        checkoutOption: MTECommerceUA.CheckoutOption?,
+        add: MTECommerceUA.Add?,
+        checkout: MTECommerceUA.Checkout?,
+        refund: MTECommerceUA.Refund?,
+        remove: MTECommerceUA.Remove?,
+        click: MTECommerceUA.Click?,
+        promoClick: MTECommerceUA.PromoClick?,
+        detail: MTECommerceUA.Detail?,
+        impressions: MTECommerceUA.Impressions?,
+        promoView: MTECommerceUA.PromoView?
 )
 ```
 Внутри purchase, checkoutOption, add и т.д могут находится структуры **ActionField** и массив **Product**.
@@ -342,7 +345,7 @@ let ecommerceUA = MTECommerceUA(
 
 ### UISceneDelegate
 
-Чтобы отслеживать открытия приложения с помощью link, в *UISceneDelegate* в метод ```scene:willConnectToSession:options:``` добавьте код:
+Чтобы отслеживать открытия приложения с помощью Universal link, в *UISceneDelegate* в метод ```scene:willConnectToSession:options:``` добавьте код:
 
 ```swift
 func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
@@ -350,12 +353,12 @@ func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options conn
     if userActivity?.activityType == NSUserActivityTypeBrowsingWeb {
         // Universal Link
         if let url = userActivity?.webpageURL {
-            mtsAnalytics.track(url: url, parameters: [:])
+            MTMetricsApp.analytics?.track(url: url, parameters: [:])
         }
     } else {
         // Deeplink
         if let context = connectionOptions.urlContexts.first {
-            mtsAnalytics.track(url: context.url, parameters: [:])
+            MTMetricsApp.analytics?.track(url: context.url, parameters: [:])
         }
     }
 }
@@ -367,13 +370,13 @@ func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options conn
 func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
     let url = userActivity.webpageURL
     if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url {
-        mtsAnalytics.track(url: url, parameters: [:])
+        MTMetricsApp.analytics?.track(url: url, parameters: [:])
     }
 }
 
 func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
     if let context = URLContexts.first {
-        mtsAnalytics.track(url: context.url, parameters: [:])
+        MTMetricsApp.analytics?.track(url: context.url, parameters: [:])
     }
 }
 ```
@@ -384,18 +387,18 @@ func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>)
 
 ```swift
 func application(_ application: UIApplication, trackOpeningURL url: URL) -> Bool {
-    mtsAnalytics.track(url: context.url, parameters: [:])
+    MTMetricsApp.analytics?.track(url: context.url, parameters: [:])
     return true
 }
 
 func application(_ application: UIApplication, openURL url: URL, sourceApplication: String?, annotation: AnyObject) -> Bool {
-    mtsAnalytics.track(url: context.url, parameters: [:])
+    MTMetricsApp.analytics?.track(url: context.url, parameters: [:])
     return true
 }
 
 func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
     if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL {
-        mtsAnalytics.track(url: context.url, parameters: [:])
+        MTMetricsApp.analytics?.track(url: context.url, parameters: [:])
     }
     return true
 }
@@ -403,7 +406,7 @@ func application(_ application: UIApplication, continue userActivity: NSUserActi
 
 ## <a name="goto_app_activity">Отслеживание App Activity</a>
 С помощью МТС Аналитики можно отследить сколько времени проходит от нажатия пользователем на иконку приложения до первого видимого и отзывчивого экрана.
-Для этого необходимо проинициализировать МТС Аналитику как можно раньше. 
+Для этого необходимо проинициализировать МТС Аналитику как можно раньше.
 
 1. Рекомендуется инициализировать SDK в данном методе:
 ```swift
@@ -411,7 +414,7 @@ func application(_ application: UIApplication, willFinishLaunchingWithOptions la
 ```
 2. Далее во viewDidAppear первого экрана, который будет виден, вызвать метод:
 ```swift
-mtsAnalytics?.trackViewDidAppearTime()
+MTMetricsApp.analytics?.trackViewDidAppearTime()
 ```
 Итого можно будет отследить три метрики:
 - время инициализации приложения
@@ -447,7 +450,7 @@ https://*product*.url.mts.ru/example
 ```
 
 В зависимости от того, установлено и настроено ли приложение на устройстве будет:
-1. Запуск приложения 
+1. Запуск приложения
 2. Открытие AppStore на странице приложения
 
 ### Получение параметров Universal Link
@@ -483,14 +486,14 @@ public struct MTLink {
 
 ### UISceneDelegate
 
-Чтобы обработать universal link в SceneDelegate, в случае если приложение запускается по ссылке, используйте код: 
+Чтобы обработать universal link в SceneDelegate, в случае если приложение запускается по ссылке, используйте код:
 
 ```swift
 func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
     let userActivity = connectionOptions.userActivities.first
     if userActivity?.activityType == NSUserActivityTypeBrowsingWeb {
         Task {
-            let link = try? await mtsAnalytics.resolveLink(url: url)
+            let link = try? await MTMetricsApp.analytics?.resolveLink(url: url)
         }
     }
 }
@@ -503,7 +506,7 @@ func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
     let url = userActivity.webpageURL
     if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url {
         Task {
-            let link = try? await mtsAnalytics.resolveLink(url: url)
+            let link = try? await MTMetricsApp.analytics?.resolveLink(url: url)
         }
     }
 }
@@ -516,7 +519,7 @@ func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
 
 ```swift
 func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-    mtsAnalytics.resolveLink(url: url) { result in
+    MTMetricsApp.analytics?.resolveLink(url: url) { result in
         switch result {
             case .success(let link):
                 ...
@@ -540,3 +543,119 @@ MTEcosystemEvent:
 - первые 20 полей до 500, остальные до 200.
 
 Максимальное количество символов для MTECommerceGa4 и MTECommerceUA - 100.
+
+
+## <a name="goto_remote_config">RemoteConfig</a>
+
+`MTRemoteConfig` — это класс для управления удаленными настройками конфигурации в вашем приложении. Он позволяет задавать значения по умолчанию, получать обновления с сервера и активировать их для использования в приложении без необходимости выпуска новых версий. Кроме того, `MTRemoteConfig` поддерживает проведение AB-тестов, что позволяет тестировать различные сценарии и функции на разных группах пользователей.
+
+### Инициализация
+
+Создайте экземпляр Remote Config
+  
+```swift
+let remoteConfig = MTMetricsApp.remoteConfig
+```
+
+### Установка значений по умолчанию
+
+Задайте значения по умолчанию для параметров конфигурации. Это обеспечит работу приложения до получения remote config с сервера.
+
+#### Из plist-файла:
+
+```swift
+remoteConfig.setDefaults(plistName: "DefaultConfig")
+```
+
+#### Из словаря:
+
+```swift
+remoteConfig.setDefaults(dict: [
+    "welcome_message": "Добро пожаловать!",
+    "new_feature_flag": false,
+    "max_items": 10
+])
+```
+
+### Настройка параметров запросов
+
+#### minFetchInterval
+
+Минимальный интервал (в секундах) между последовательными запросами к серверу.
+Используйте для предотвращения частых запросов. Значение по умолчанию: 300
+```swift
+remoteConfig.minFetchInterval = 600
+```
+
+#### fetchTimeout
+Максимальное время ожидания ответа от сервера (в секундах).
+Значение по умолчанию: 30
+```swift
+remoteConfig.fetchTimeout = 15
+```
+
+### Получение и активация значений с сервера
+
+Чтобы получить обновленные значения с сервера, вызовите метод `fetchRemoteConfigValues`. После успешного получения активируйте их с помощью метода `activate()`.
+
+#### Асинхронное получение:
+
+```swift
+Task {
+    let status = await remoteConfig.fetchRemoteConfigValues()
+    if status == .success {
+        remoteConfig.activate()
+    }
+}
+```
+
+#### С использованием completion handler:
+
+```swift
+remoteConfig.fetchRemoteConfigValues { status in
+    if status == .success {
+        remoteConfig.activate()
+    }
+}
+```
+
+#### Асинхронное получение и активация:
+
+```swift
+Task {
+    do {
+        let status = try await remoteConfig.fetchRemoteConfigValuesAndActivate()
+        if status == .success {
+            print("Конфигурация успешно обновлена и активирована")
+        }
+    } catch {
+        print("Ошибка при получении и активации: \(error)")
+    }
+}
+```
+
+### Получение значений после активации
+
+После успешной активации полученные значения будут доступны через метод `configValue(_:)`. Этот метод возвращает объект, реализующий протокол `MTRemoteConfigValue`, который позволяет получить значение в различных форматах.
+
+```swift
+if let welcomeMessage = remoteConfig.configValue("welcome_message")?.stringValue {
+    print("Сообщение приветствия: \(welcomeMessage)")
+}
+```
+
+### Получение значений по умолчанию
+
+Если вам нужно получить значение по умолчанию, используйте метод `defaultValue(_:)`:
+
+```swift
+if let defaultValue = remoteConfig.defaultValue("welcome_message")?.stringValue {
+    print("Значение по умолчанию для welcome_message: \(defaultValue)")
+}
+```
+
+## Команда разработки
+
+- Павел Богарт, pibogar1@mts.ru
+- Олег Герман, oagerman@mts.ru
+- Анита Хасанова, arkhas12@mts.ru
