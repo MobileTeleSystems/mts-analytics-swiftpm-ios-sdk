@@ -12,7 +12,7 @@
 - [Link Manager](#goto_universal_link)
 - [Лимит символов события](#goto_symbols_limit)
 
-### Актуальная версия MTMetrics - 4.0.0
+### Актуальная версия MTMetrics - 4.1.0
 
 ## Требования для установки SDK
 
@@ -33,7 +33,7 @@ https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/
 ### Cocoapods
 1. Чтобы добавить библиотеку MTMetrics в проект, через CocoaPods добавьте в Podfile:
 ```ruby
-pod 'MTMetrics',  '~> 4.0.0'
+pod 'MTMetrics',  '~> 4.1.0'
 ```
 
 2. Устанавливаем ссылку на библиотеку MTMetrics в Podfile:
