@@ -6,13 +6,14 @@
 - [Инициализация](#goto_initialization)
 - [Отправка события](#goto_send_events)
 - [Конфигурация](#goto_configuration)
+- [Сведения об SDK](#goto_sdk_info)
 - [ECommerce события](#goto_ecommerce_feature)
 - [Отслеживание deeplink](#goto_deeplink)
-- [Отслеживание App Activity](#goto_app_activity)
 - [Link Manager](#goto_universal_link)
 - [Лимит символов события](#goto_symbols_limit)
+- [RemoteConfig](#goto_remote_config)
 
-### Актуальная версия MTMetrics - 4.1.0
+### Актуальная версия MTAnalytics - 5.0.0
 
 ## Требования для установки SDK
 
@@ -31,12 +32,12 @@ https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/
 ```
 
 ### Cocoapods
-1. Чтобы добавить библиотеку MTMetrics в проект, через CocoaPods добавьте в Podfile:
+1. Чтобы добавить библиотеку MTAnalytics в проект, через CocoaPods добавьте в Podfile:
 ```ruby
-pod 'MTMetrics',  '~> 4.1.0'
+pod 'MTAnalytics',  '~> 5.0.0'
 ```
 
-2. Устанавливаем ссылку на библиотеку MTMetrics в Podfile:
+2. Устанавливаем ссылку на библиотеку MTAnalytics в Podfile:
 ```ruby
 source 'https://github.com/MobileTeleSystems/mts-analytics-podspecs'
 ```
@@ -45,17 +46,17 @@ source 'https://github.com/MobileTeleSystems/mts-analytics-podspecs'
 ## <a name="goto_initialization">Шаг 2. Инициализация SDK</a>
 1. Сделайте импорт библиотеки:
 ```swift
-import MTMetrics
+import MTAnalytics
 ```
 2. Инициализируйте библиотеку в методе application(_:didFinishLaunchingWithOptions:) вашего UIApplicationDelegate:
-  
+
 ```swift
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
     // Создание конфига с уникальным flowid
-    let configuration = MTMetricsConfiguration(flowId: "your-flow-id")
-    
+    let configuration = MTAnalyticsConfiguration(flowId: "your-flow-id")
+
     // Активация конфига
-    MTMetricsApp.configure(configuration)
+    MTAnalyticsApp.configure(configuration)
 }
 
 ```
@@ -72,12 +73,12 @@ let event = MTCustomEvent(eventType: .event, eventName: "button_tap", screenName
 
 ### Настроить отправку экземпляра события в МТС Аналитику:
 ```swift
-MTMetricsApp.analytics?.track(event: event)
+MTAnalyticsApp.analytics?.track(event: event)
 ```
 
 ### Так же можно отправлять event и его дополнительные атрибуты без использования шаблонов
 ```swift
-MTMetricsApp.analytics?.track(eventName: "button_tap", parameters: ["test": "123"])
+MTAnalyticsApp.analytics?.track(eventName: "button_tap", parameters: ["test": "123"])
 ```
 
 ### Создать экземпляр ошибок:
@@ -91,35 +92,35 @@ let error = MTError(errorName: "failed request", parameters: ["test": "123"])
 ### Кросс-платформенное отслеживание
 Для авторизации сессии через webView используйте WebSSO state, который можно получить из WebSSO SDK.
 ```swift
-MTMetricsApp.analytics?.sendAuthenticationEvent(ssoState: "...", redirectUrl: "https://mts.ru")
+MTAnalyticsApp.analytics?.sendAuthenticationEvent(ssoState: "...", redirectUrl: "https://mts.ru")
 ```
 Для передачи значения вызовите метод и передайте ранее полученный ssoState в формате String.
 Для определения сессии юзера в случае перехода в webView или внешний браузер через приложение в котором активирован MTAnalytics, при формировании запроса для webView или браузер требуется добавить webSessionQueryItem в url запроса в виде URLQueryItem.
 ```swift
-let queryItem = MTMetricsApp.analytics?.webSessionQueryItem(url: "https://mts.ru")
+let queryItem = MTAnalyticsApp.analytics?.webSessionQueryItem(url: "https://mts.ru")
 ```
 
 ### Передача данных о геолокации
 ```swift
-MTMetricsApp.analytics?.setLocation(CLLocation(latitude: latitude, longitude: longitude))
+MTAnalyticsApp.analytics?.setLocation(CLLocation(latitude: latitude, longitude: longitude))
 ```
 
 ### Обновление конфигурации без повторной инициализации
 ```swift
-MTMetricsApp.analytics?.update(with: configuration)
+MTAnalyticsApp.analytics?.update(with: configuration)
 ```
 
 ## <a name="goto_configuration">Конфигурация SDK</a>
 
 ```swift
 func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    let configuration = MTMetricsConfiguration(flowId: "your-flow-id")
+    let configuration = MTAnalyticsConfiguration(flowId: "your-flow-id")
 
     // Кастомизация конфигурации аналитики, например расширение хранилища событий
     configuration.eventStorageLimit = 10000
 
     // Инициализация Аналитики
-    MTMetricsApp.configure(configuration)
+    MTAnalyticsApp.configure(configuration)
 }
 
 ```
@@ -152,13 +153,27 @@ configuration.networkTraffic = .on
 Дает возможность остановить отправку событий. По умолчанию отправка событий включена.
 
 
+## <a name="goto_sdk_info">Сведения об SDK</a>
+Для получения информации о текущей версии MTAnalytics:
+```swift
+MTAnalyticsApp.analytics?.sdkVersion
+```
+Свойство sdkVersion предоставляет текущую версию SDK.
+Пример: "1.2.3"
+
+```swift
+MTAnalyticsApp.analytics?.sdkBuildNumber
+```
+Свойство sdkBuildNumber предоставляет текущий номер сборки версии SDK.
+Пример: "5"
+
 ## <a name="goto_ecommerce_feature">Отправка ECommerce событий</a>
 
 МТС Аналитика предоставляет два вида шаблонов ECommerce событий: MTECommerceGA4 и MTECommerceUA.
 Для отправки ECommerce событий используется метод
 
 ```swift
-MTMetricsApp.analytics?.track(event: event)
+MTAnalyticsApp.analytics?.track(event: event)
 ```
 
 ### MTECommerceGA4Event
@@ -353,12 +368,12 @@ func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options conn
     if userActivity?.activityType == NSUserActivityTypeBrowsingWeb {
         // Universal Link
         if let url = userActivity?.webpageURL {
-            MTMetricsApp.analytics?.track(url: url, parameters: [:])
+            MTAnalyticsApp.analytics?.track(url: url, parameters: [:])
         }
     } else {
         // Deeplink
         if let context = connectionOptions.urlContexts.first {
-            MTMetricsApp.analytics?.track(url: context.url, parameters: [:])
+            MTAnalyticsApp.analytics?.track(url: context.url, parameters: [:])
         }
     }
 }
@@ -370,13 +385,13 @@ func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options conn
 func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
     let url = userActivity.webpageURL
     if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url {
-        MTMetricsApp.analytics?.track(url: url, parameters: [:])
+        MTAnalyticsApp.analytics?.track(url: url, parameters: [:])
     }
 }
 
 func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
     if let context = URLContexts.first {
-        MTMetricsApp.analytics?.track(url: context.url, parameters: [:])
+        MTAnalyticsApp.analytics?.track(url: context.url, parameters: [:])
     }
 }
 ```
@@ -387,39 +402,22 @@ func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>)
 
 ```swift
 func application(_ application: UIApplication, trackOpeningURL url: URL) -> Bool {
-    MTMetricsApp.analytics?.track(url: context.url, parameters: [:])
+    MTAnalyticsApp.analytics?.track(url: context.url, parameters: [:])
     return true
 }
 
 func application(_ application: UIApplication, openURL url: URL, sourceApplication: String?, annotation: AnyObject) -> Bool {
-    MTMetricsApp.analytics?.track(url: context.url, parameters: [:])
+    MTAnalyticsApp.analytics?.track(url: context.url, parameters: [:])
     return true
 }
 
 func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
     if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url = userActivity.webpageURL {
-        MTMetricsApp.analytics?.track(url: context.url, parameters: [:])
+        MTAnalyticsApp.analytics?.track(url: context.url, parameters: [:])
     }
     return true
 }
 ```
-
-## <a name="goto_app_activity">Отслеживание App Activity</a>
-С помощью МТС Аналитики можно отследить сколько времени проходит от нажатия пользователем на иконку приложения до первого видимого и отзывчивого экрана.
-Для этого необходимо проинициализировать МТС Аналитику как можно раньше.
-
-1. Рекомендуется инициализировать SDK в данном методе:
-```swift
-func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool
-```
-2. Далее во viewDidAppear первого экрана, который будет виден, вызвать метод:
-```swift
-MTMetricsApp.analytics?.trackViewDidAppearTime()
-```
-Итого можно будет отследить три метрики:
-- время инициализации приложения
-- время рендеринга первого фрейма
-- время показа первого экрана
 
 ## <a name="goto_universal_link">Использование Link Manager</a>
 
@@ -493,7 +491,7 @@ func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options conn
     let userActivity = connectionOptions.userActivities.first
     if userActivity?.activityType == NSUserActivityTypeBrowsingWeb {
         Task {
-            let link = try? await MTMetricsApp.analytics?.resolveLink(url: url)
+            let link = try? await MTAnalyticsApp.linkResolver?.resolveLink(url: url)
         }
     }
 }
@@ -506,7 +504,7 @@ func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
     let url = userActivity.webpageURL
     if userActivity.activityType == NSUserActivityTypeBrowsingWeb, let url {
         Task {
-            let link = try? await MTMetricsApp.analytics?.resolveLink(url: url)
+            let link = try? await MTAnalyticsApp.linkResolver?.resolveLink(url: url)
         }
     }
 }
@@ -519,7 +517,7 @@ func scene(_ scene: UIScene, continue userActivity: NSUserActivity) {
 
 ```swift
 func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-    MTMetricsApp.analytics?.resolveLink(url: url) { result in
+    MTAnalyticsApp.linkResolver?.resolveLink(url: url) { result in
         switch result {
             case .success(let link):
                 ...
@@ -552,9 +550,9 @@ MTEcosystemEvent:
 ### Инициализация
 
 Создайте экземпляр Remote Config
-  
+
 ```swift
-let remoteConfig = MTMetricsApp.remoteConfig
+let remoteConfig = MTAnalyticsApp.remoteConfig
 ```
 
 ### Установка значений по умолчанию
@@ -657,5 +655,4 @@ if let defaultValue = remoteConfig.defaultValue("welcome_message")?.stringValue 
 ## Команда разработки
 
 - Павел Богарт, pibogar1@mts.ru
-- Олег Герман, oagerman@mts.ru
 - Анита Хасанова, arkhas12@mts.ru

@@ -1,5 +1,26 @@
 # Changelog
 
+## v.5.0.0 - April 2, 2025
+
+### Changed
+
+- Breaking: MTMetricsConfiguration переименован на MTAnalyticsConfiguration
+- Breaking: MTMetricsApp переименован на MTAnalyticsApp
+- Breaking: метод resolveLink перенесен в linkResolver
+- Breaking: sdkVersion and sdkBuildNumber перенесены в MTAnalyticsApp
+- Обновлена структура лог сообщений
+
+### Added
+- Добавлены async track методы
+
+## v.4.1.0 - February 11, 2025
+
+### Added
+- Добавлено проперти для получения sdkBuildNumber
+
+### Fixed
+- Исправлена работа log сообщений
+
 ## v.4.0.0 - February 5, 2025
 
 ### Changed

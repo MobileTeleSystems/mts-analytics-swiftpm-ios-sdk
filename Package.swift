@@ -1,16 +1,16 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.8
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
-    name: "MTMetrics",
+    name: "MTAnalytics",
     platforms: [
         .iOS(.v13),
         .tvOS(.v13)
     ],
     products: [
-         .library(name: "MTMetrics", targets: ["MTMetrics"])
+         .library(name: "MTAnalytics", targets: ["MTAnalytics"])
     ],
     dependencies: [
       	.package(url: "https://github.com/microsoft/plcrashreporter.git", .upToNextMajor(from: "1.11.0")),
@@ -18,9 +18,9 @@ let package = Package(
     ],
     targets: [
         .binaryTarget(
-            name: "MTMetrics",
-            url: "https://packages.a.mts.ru/repository/apple-sdk/ios-sdk/build/MTMetrics-4.1.0.zip",
-            checksum: "bb211a2f9d0fb6db39807304638949389e16955304065d5fb9ef1e8c640e26af"
+            name: "MTAnalytics",
+            url: "https://packages.a.mts.ru/repository/apple-sdk/ios-sdk/build/MTAnalytics-5.0.0.zip",
+            checksum: "d5e12ee1907aa1d19f8ce729ddf514de30e447c10fac55abdc6b1aa5eb2f5494"
          )
     ]
 )
