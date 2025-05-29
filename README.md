@@ -12,8 +12,9 @@
 - [Link Manager](#goto_universal_link)
 - [Лимит символов события](#goto_symbols_limit)
 - [RemoteConfig](#goto_remote_config)
+- [Perfomance](#goto_perfomance)
 
-### Актуальная версия MTAnalytics - 5.0.0
+### Актуальная версия MTAnalytics - 5.1.0
 
 ## Требования для установки SDK
 
@@ -34,7 +35,7 @@ https://github.com/MobileTeleSystems/mts-analytics-swiftpm-ios-sdk/
 ### Cocoapods
 1. Чтобы добавить библиотеку MTAnalytics в проект, через CocoaPods добавьте в Podfile:
 ```ruby
-pod 'MTAnalytics',  '~> 5.0.0'
+pod 'MTAnalytics',  '~> 5.1.0'
 ```
 
 2. Устанавливаем ссылку на библиотеку MTAnalytics в Podfile:
@@ -651,6 +652,78 @@ if let defaultValue = remoteConfig.defaultValue("welcome_message")?.stringValue 
     print("Значение по умолчанию для welcome_message: \(defaultValue)")
 }
 ```
+
+## <a name="goto_remote_config">Perfomance</a>
+
+`MTPerformance` — это инструмент для:
+- Замера скорости работы участков кода с помощью `MTTracer` с последующей отправкой события в центр аналитики.
+- Трекинг URL запросов из приложения с возможностью фильтрации трафика и последующей отправкой события с параметрами запроса в центр аналитики.
+- Замера скорости открытия приложения от нажатия на иконку до первого вызвова viewDidAppear.
+
+### Инициализация
+
+Создайте экземпляр
+
+```swift
+let performance = MTAnalyticsApp.performance
+```
+
+Для начала трекинга запросов и скорости открытия приложения необходимо до инициализации сетевого слоя в приложении проинициализировать `MTAnalytics`:
+
+```swift
+func application(
+    _ application: UIApplication,
+    willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
+) -> Bool {
+    let configuration = MTAnalyticsConfiguration(flowId: "your-flow-id")
+    configuration.appStartMetricsCollectingEnabled = true
+    configuration.networkTrackingEnabled = true
+    MTAnalyticsApp.configure(configuration)
+}
+
+```
+### Трекинг URL-запросов
+Для фильтрации трафика необходимо вызвать `setExcludedUrls`:
+
+```swift
+let filteredRequests: [String] = ["https://example.com"]
+performance?.setExcludedUrls(filteredRequests)
+```
+
+### Tracer
+
+`MTTracer` - инструмент, позволяющий произвести замеры выполения кода в вашем приложении.
+
+При инициализации необходимо указать название замера:
+
+```swift
+let tracer = performance.newTrace("customTrace")
+```
+
+Для запуска и остановки замера используйте функции `start()` и `stop()`:
+
+```swift
+tracer.start()
+// some code running
+tracer.stop()
+```
+
+После остановки замера событие с параметрами замера и названием автоматически отправится в систему аналитики, но если вам необходимо получить данные замера, то можете воспользоваться параметрами `name` и `lastMeasure`:
+
+```swift
+public protocol MTTracer {
+    /*
+     Name of the tracer that was passed through the init
+     */
+    var name: String { get }
+
+    /*
+     Last measure between calls start and stop functions
+     */
+    var lastMeasure: Double? { get }
+    ...
+}
+``` 
 
 ## Команда разработки
 

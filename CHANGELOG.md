@@ -1,5 +1,15 @@
 # Changelog
 
+## v.5.1.0 - May 26, 2025
+
+### Added
+- Добавлена версия MTAnalytics в формате Static Framework
+- Добавлен функционал Perfomance
+- Добавлено новое публичное свойство allValues в Remote Config
+
+### Fixed
+- Исправлен data race в SQLite
+
 ## v.5.0.0 - April 2, 2025
 
 ### Changed
