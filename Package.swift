@@ -19,8 +19,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "MTAnalytics",
-            url: "https://packages.a.mts.ru/repository/apple-sdk/ios-sdk/build/MTAnalytics-Dynamic-5.1.0.zip",
-            checksum: "1ff65f5ee7798fdaf6d3bcc584b8a477bd5fb9085ba9b668618f2c2a75ad8b4d"
+            url: "https://packages.a.mts.ru/repository/apple-sdk/ios-sdk/build/MTAnalytics-Dynamic-5.1.1.zip",
+            checksum: "1874b03df487207a2376c528e58b08d6ade26f9f075f16abff34c12963b262b7"
          )
     ]
 )

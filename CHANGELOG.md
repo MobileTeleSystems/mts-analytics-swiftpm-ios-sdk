@@ -1,6 +1,11 @@
 # Changelog
 
-## v.5.1.0 - May 26, 2025
+## v.5.1.1 - May 30, 2025
+
+### Fixed
+- Исправлена проблема с установкой SDK через cocoapods
+
+## v.5.1.0 - May 29, 2025
 
 ### Added
 - Добавлена версия MTAnalytics в формате Static Framework
